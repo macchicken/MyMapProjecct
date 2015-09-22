@@ -1,8 +1,11 @@
 package comp5216.sydney.edu.au.mymapprojecct;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -12,9 +15,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Document;
+
+import comp5216.sydney.edu.au.maplibrary.GoogleDirection;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener  {
 
@@ -22,12 +30,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private TextView locationTextView;
     private Location mLastLocation;
+    private GoogleDirection gd;
+    private Document mDoc;
+    private LatLng start;
+    private LatLng end;
+    private Button directionBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         locationTextView = (TextView)findViewById(R.id.location);
+        directionBtn= (Button) findViewById(R.id.buttonRequest);
+        gd = new GoogleDirection(this);
+        gd.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
+            public void onResponse(String status, Document doc, GoogleDirection gd) {
+                mDoc = doc;
+                mMap.addPolyline(gd.getPolyline(doc, 3, Color.RED));
+                mMap.addMarker(new MarkerOptions().position(start)
+                        .icon(BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_GREEN)));
+                mMap.addMarker(new MarkerOptions().position(end)
+                        .icon(BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_ORANGE)));
+            }
+        });
+        directionBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                v.setVisibility(View.GONE);
+                gd.setLogging(true);
+                gd.request(start, end, GoogleDirection.MODE_DRIVING);
+            }
+        });
         setUpMapIfNeeded();
     }
 
@@ -105,6 +139,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // create marker
         MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title("I am here");
         // adding marker
+        start=new LatLng(lat, lon);
+        end=new LatLng(-32, 150);
         mMap.addMarker(marker);
     }
 
@@ -121,8 +157,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng sydney = new LatLng(-34, 151);
-        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        LatLng sydney = new LatLng(-34, 151);
+//        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }

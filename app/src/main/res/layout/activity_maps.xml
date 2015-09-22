@@ -23,4 +23,12 @@ android:paddingTop="10dp">
     android:layout_alignParentBottom="true"
     android:text="location" />
 
+<Button
+    android:id="@+id/buttonRequest"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:text="Request" />
+
 </RelativeLayout>
