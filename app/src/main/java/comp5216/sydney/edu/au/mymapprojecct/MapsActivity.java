@@ -140,7 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon)).title("I am here");
         // adding marker
         start=new LatLng(lat, lon);
-        end=new LatLng(-32, 150);
+        end=new LatLng(-33.8568911, 151.2152902);
         mMap.addMarker(marker);
     }
 
