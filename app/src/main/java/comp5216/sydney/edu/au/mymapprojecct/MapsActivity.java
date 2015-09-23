@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +22,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
 
 import comp5216.sydney.edu.au.maplibrary.GoogleDirection;
 
@@ -53,6 +58,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(end)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_ORANGE)));
+                locationTextView.append("\n");
+                locationTextView.append(Html.fromHtml(getInstructions().toString()));
+
             }
         });
         directionBtn.setOnClickListener(new View.OnClickListener() {
@@ -160,5 +168,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        LatLng sydney = new LatLng(-34, 151);
 //        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    private int getNodeIndex(NodeList nl, String nodename) {
+        for(int i = 0 ; i < nl.getLength() ; i++) {
+            if(nl.item(i).getNodeName().equals(nodename))
+                return i;
+        }
+        return -1;
+    }
+
+	private StringBuilder getInstructions() {
+        StringBuilder instructions=new StringBuilder();
+        NodeList nl1 = mDoc.getElementsByTagName("step");
+		int len=nl1.getLength();
+        if (len > 0) {
+            for (int i = 0; i < len; i++) {
+                Node node1 = nl1.item(i);
+                NodeList nl2 = node1.getChildNodes();
+                Node instrNode = nl2.item(getNodeIndex(nl2, "html_instructions"));
+                instructions.append(instrNode.getTextContent()+"<br>");
+            }
+        }
+        return instructions;
     }
 }
