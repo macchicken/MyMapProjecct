@@ -40,7 +40,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng start;
     private LatLng end;
     private Button directionBtn;
-    private String oldText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(end)
                         .icon(BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_ORANGE)));
-                locationTextView.setText(oldText + "\n" + Html.fromHtml(getInstructions().toString()));
+                locationTextView.setText(Html.fromHtml(getInstructions().toString()));
             }
         });
         directionBtn.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +137,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double lat = mCurrentLocation.getLatitude();
         double lon = mCurrentLocation.getLongitude();
         String msg = "Current Location: " + Double.toString(lat) + "," + Double.toString(lon);
-        oldText=msg;
         locationTextView.setText(msg);
         //update google map, move it to current location
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat,lon)).zoom(16).build();
